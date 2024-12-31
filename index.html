@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的个人网页</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>欢迎来到我的个人网页</h1>
+    <p>这是我的个人简介和一些展示内容。</p>
+  </header>
+
+  <section id="about-me">
+    <h2>关于我</h2>
+    <p>你好，我是 [你的名字]，这是一段简短的自我介绍。</p>
+    <img src="profile.jpg" alt="我的头像" width="150">
+  </section>
+
+  <section id="contact">
+    <h2>联系方式</h2>
+    <p>你可以通过以下方式联系我：</p>
+    <ul>
+      <li>电子邮件：<a href="mailto:your-email@example.com">your-email@example.com</a></li>
+      <li>GitHub：<a href="https://github.com/your-username" target="_blank">你的 GitHub 主页</a></li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 [你的名字]. All Rights Reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+   <div class="memo-container">
+        <h2>我的备忘录</h2>
+        <div>
+            <input type="text" id="memoInput" placeholder="输入备忘内容...">
+            <button onclick="addMemo()">添加备忘</button>
+        </div>
+        <div class="memo-list" id="memoList"></div>
+    </div>
+
+    <script>
+        // 初始化加载备忘录
+        document.addEventListener('DOMContentLoaded', loadMemos);
+
+        function addMemo() {
+            const input = document.getElementById('memoInput');
+            const text = input.value.trim();
+
+            if (text === '') {
+                alert('请输入内容');
+                return;
+            }
+
+            const memo = {
+                id: Date.now(),
+                text: text,
+                timestamp: new Date().toLocaleString()
+            };
+
+            saveMemo(memo);
+            input.value = '';
+            appendMemoToDOM(memo);
+        }
+
+        function saveMemo(memo) {
+            let memos = JSON.parse(localStorage.getItem('memos') || '[]');
+            memos.push(memo);
+            localStorage.setItem('memos', JSON.stringify(memos));
+        }
+
+        function loadMemos() {
+            const memos = JSON.parse(localStorage.getItem('memos') || '[]');
+            memos.forEach(memo => appendMemoToDOM(memo));
+        }
+
+        function appendMemoToDOM(memo) {
+            const list = document.getElementById('memoList');
+
+            const item = document.createElement('div');
+            item.className = 'memo-item';
+            item.innerHTML = `
+                <div>
+                    <span>${memo.text}</span>
+                    <small style="color: #666; margin-left: 10px;">${memo.timestamp}</small>
+                </div>
+                <button class="delete-btn" onclick="deleteMemo(${memo.id})">删除</button>
+            `;
+
+            list.appendChild(item);
+        }
+
+        function deleteMemo(id) {
+            let memos = JSON.parse(localStorage.getItem('memos'));
+            memos = memos.filter(memo => memo.id !== id);
+            localStorage.setItem('memos', JSON.stringify(memos));
+
+            // 重新加载列表
+            document.getElementById('memoList').innerHTML = '';
+            loadMemos();
+        }
+    </script>
+</body>
+</html>
